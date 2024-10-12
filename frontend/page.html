@@ -1,3 +1,4 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,68 +7,13 @@
     <title>Webcam Pose Estimation</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tensorflow/3.18.0/tf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection"></script>
+    <style>
+        body { display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        canvas { border: 1px solid #000; }
+    </style>
 </head>
 <body>
-    <h1>Webcam Pose Estimation</h1>
-    <video id="video" width="640" height="480" autoplay></video>
     <canvas id="output" width="640" height="480"></canvas>
-
-    <script>
-        const video = document.getElementById('video');
-        const canvas = document.getElementById('output');
-        const ctx = canvas.getContext('2d');
-
-        async function setupCamera() {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-            video.srcObject = stream;
-            return new Promise(resolve => {
-                video.onloadedmetadata = () => resolve(video);
-            });
-        }
-
-        async function loadModel() {
-            const model = poseDetection.SupportedModels.MoveNet;
-            const detectorConfig = {
-                modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING
-            };
-            return poseDetection.createDetector(model, detectorConfig);
-        }
-
-        async function detectPose(detector) {
-            const poses = await detector.estimatePoses(video);
-            return poses[0];
-        }
-
-        function drawKeypoints(pose) {
-            if (pose && pose.keypoints) {
-                for (let keypoint of pose.keypoints) {
-                    if (keypoint.score > 0.3) {
-                        ctx.beginPath();
-                        ctx.arc(keypoint.x, keypoint.y, 5, 0, 2 * Math.PI);
-                        ctx.fillStyle = 'red';
-                        ctx.fill();
-                    }
-                }
-            }
-        }
-
-        async function renderLoop(detector) {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            
-            const pose = await detectPose(detector);
-            drawKeypoints(pose);
-
-            requestAnimationFrame(() => renderLoop(detector));
-        }
-
-        async function main() {
-            await setupCamera();
-            const detector = await loadModel();
-            renderLoop(detector);
-        }
-
-        main();
-    </script>
+    <script src="pose_estimation.js"></script>
 </body>
 </html>
