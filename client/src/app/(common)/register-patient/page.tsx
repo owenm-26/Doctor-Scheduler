@@ -3,11 +3,10 @@
 import React from "react";
 import type { FormProps } from "antd";
 import { Button, Form, Input } from "antd";
-import RegisterNavbar from "../../../components/RegisterNavbar";
 
 type FieldType = {
-  firstname?: String;
-  lastname?: String;
+  firstname?: string;
+  lastname?: string;
   username?: string;
   password?: string;
   remember?: string;
@@ -24,7 +23,6 @@ const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (errorInfo) => {
 const Register: React.FC = () => {
   return (
     <div className="h-screen flex flex-col">
-      <RegisterNavbar />
       <div
         className="flex-grow w-screen flex flex-col justify-center items-center gap-6
         "

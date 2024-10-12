@@ -3,7 +3,6 @@
 import React from "react";
 import type { FormProps } from "antd";
 import { Button, Form, Input } from "antd";
-import RegisterNavbar from "../../../../components/RegisterNavbar";
 
 type FieldType = {
   username?: string;
@@ -22,7 +21,6 @@ const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (errorInfo) => {
 const Login: React.FC = () => {
   return (
     <div className="h-screen flex flex-col">
-      <RegisterNavbar />
       <div
         className="flex-grow w-screen flex flex-col justify-center items-center gap-6
         "
@@ -62,7 +60,10 @@ const Login: React.FC = () => {
             </Form.Item>
 
             <Form.Item className="w-full flex justify-end">
-              <a href="/register" className="text-blue-500 hover:underline">
+              <a
+                href="/register-onboard"
+                className="text-blue-500 hover:underline"
+              >
                 Not a user? Register here
               </a>
             </Form.Item>
