@@ -36,7 +36,7 @@ const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
         email: values.email,
         password: values.password,
         birthday: birthdayISO,
-        role: "TRAINER",
+        role: "PATIENT",
       }),
     });
 

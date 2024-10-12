@@ -7,13 +7,49 @@ import { Button, Form, Input } from "antd";
 type FieldType = {
   firstname?: string;
   lastname?: string;
-  username?: string;
+  email?: string;
   password?: string;
-  remember?: string;
+  birthday?: string;
+  role?: string;
 };
 
-const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
-  console.log("Success:", values);
+const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
+
+  if (values.birthday) {
+    const birthday: Date = new Date(Date.parse(values.birthday));
+  }
+
+  try {
+    console.log("Attempting fetch...");
+    const birthdayISO = values.birthday
+      ? new Date(values.birthday).toISOString()
+      : null;
+
+    const response = await fetch("/api/auth/signup", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        first_name: values.firstname,
+        last_name: values.lastname,
+        email: values.email,
+        password: values.password,
+        birthday: birthdayISO,
+        role: "PATIENT",
+      }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      alert("Registered successfully!");
+    } else {
+      alert("Registration failed.");
+    }
+  } catch (error) {
+    console.error("An error occurred while registering:", error);
+  }
 };
 
 const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (errorInfo) => {

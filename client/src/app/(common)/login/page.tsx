@@ -3,16 +3,39 @@
 import React from "react";
 import type { FormProps } from "antd";
 import { Button, Form, Input } from "antd";
-import type { NextApiRequest, NextApiResponse } from 'next'
 
 type FieldType = {
-  username?: string;
+  email?: string;
   password?: string;
-  remember?: string;
 };
 
-const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
+const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
   console.log("Success:", values);
+
+  try {
+    console.log("Attempting fetch...");
+    const response = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: values.email,
+        password: values.password,
+        role: "PATIENT",
+      }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      
+    } else {
+      alert("Registration failed.");
+    }
+  } catch (error) {
+    console.error("An error occurred while registering:", error);
+  }
 };
 
 const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (errorInfo) => {
@@ -39,10 +62,10 @@ const Login: React.FC = () => {
             autoComplete="off"
           >
             <Form.Item<FieldType>
-              label="Username"
-              name="username"
+              label="Email"
+              name="email"
               rules={[
-                { required: true, message: "Please input your username!" },
+                { required: true, message: "Please input your email!" },
               ]}
               className="w-full"
             >
