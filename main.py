@@ -6,6 +6,7 @@ mp_drawing = mp.solutions.drawing_utils
 mp_pose = mp.solutions.pose
 
 # Initialize webcam
+# might have to be 0 for windows
 cap = cv2.VideoCapture(1)
 
 # Set up the Pose model
