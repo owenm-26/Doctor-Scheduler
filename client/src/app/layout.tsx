@@ -11,7 +11,8 @@ export default function RootLayout({
     <html>
       <body>
         <MainHeader />
-        {children}
+        <div style={{ padding: "2rem", maxHeight: "80%" }}>{children}</div>
+
         <Footer />
       </body>
     </html>
