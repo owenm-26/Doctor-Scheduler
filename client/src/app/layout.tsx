@@ -1,5 +1,5 @@
 import Footer from "../../components/Footer";
-import MainHeader from "../../components/MainNavbar";
+import MainNavbar from "../../components/MainNavbar";
 import "./globals.css";
 
 export default function RootLayout({
@@ -10,9 +10,17 @@ export default function RootLayout({
   return (
     <html>
       <body>
-        <MainHeader />
-        {children}
-        <Footer />
+        <div className="h-screen">
+          <header className="h-[10%]">
+            <MainNavbar />
+          </header>
+          <main className="h-[80%] overflow-hidden">
+            {children}
+          </main>
+          <footer className="h-[10%]">
+            <Footer />
+          </footer>
+        </div>
       </body>
     </html>
   );

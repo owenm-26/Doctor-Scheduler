@@ -7,7 +7,7 @@ const Home: React.FC = () => {
   const { Content } = Layout;
 
   return (
-    <Layout className="h-screen">
+    <Layout className="h-full">
       <Content
         style={{
           display: "flex",

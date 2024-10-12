@@ -7,13 +7,49 @@ import { Button, Form, Input } from "antd";
 type FieldType = {
   firstname?: string;
   lastname?: string;
+  email?: string;
   username?: string;
   password?: string;
-  remember?: string;
+  birthday?: string;
+  role?: string;
 };
 
-const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
+const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
   console.log("Success:", values);
+
+  if (values.birthday) {
+    const birthday: Date = new Date(Date.parse(values.birthday));
+    return;
+  }
+
+  try {
+    const birthdayISO = values.birthday ? new Date(values.birthday).toISOString() : null;
+
+    const response = await fetch("/api/auth/signup", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        first_name: values.firstname,
+        last_name: values.lastname,
+        email: values.email,
+        password: values.password,
+        birthday: birthdayISO,
+        role: "TRAINER",
+      }),
+    });
+    const data = await response.json();
+    console.log(data);
+
+    if (response.ok) {
+      alert("Registered successfully!");
+    } else {
+      alert("Registration failed.");
+    }
+  } catch (error) {
+    console.error("An error occurred while registering:", error);
+  }
 };
 
 const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (errorInfo) => {
@@ -22,11 +58,8 @@ const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (errorInfo) => {
 
 const Register: React.FC = () => {
   return (
-    <div className="h-screen flex flex-col">
-      <div
-        className="flex-grow w-screen flex flex-col justify-center items-center gap-6
-        "
-      >
+    <div className="h-full flex flex-col">
+      <div className="flex-grow w-screen flex flex-col justify-center items-center gap-1">
         <h2 className="text-4xl">Register</h2>
         <>
           <Form
@@ -56,6 +89,26 @@ const Register: React.FC = () => {
               rules={[
                 { required: true, message: "Please input your username!" },
               ]}
+              className="w-full"
+            >
+              <Input className="w-full" />
+            </Form.Item>
+
+            <Form.Item<FieldType>
+              label="Birthday"
+              name="birthday"
+              rules={[
+                { required: true, message: "Please input your birthday!" },
+              ]}
+              className="w-full"
+            >
+              <Input className="w-full" type="date" />
+            </Form.Item>
+
+            <Form.Item<FieldType>
+              label="Email"
+              name="email"
+              rules={[{ required: true, message: "Please input your email!" }]}
               className="w-full"
             >
               <Input className="w-full" />

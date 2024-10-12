@@ -3,6 +3,7 @@
 import React from "react";
 import type { FormProps } from "antd";
 import { Button, Form, Input } from "antd";
+import type { NextApiRequest, NextApiResponse } from 'next'
 
 type FieldType = {
   username?: string;
@@ -20,7 +21,7 @@ const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (errorInfo) => {
 
 const Login: React.FC = () => {
   return (
-    <div className="h-screen flex flex-col">
+    <div className="h-full flex flex-col">
       <div
         className="flex-grow w-screen flex flex-col justify-center items-center gap-6
         "
