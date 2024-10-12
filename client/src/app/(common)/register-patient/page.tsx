@@ -8,22 +8,22 @@ type FieldType = {
   firstname?: string;
   lastname?: string;
   email?: string;
-  username?: string;
   password?: string;
   birthday?: string;
   role?: string;
 };
 
 const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
-  console.log("Success:", values);
 
   if (values.birthday) {
     const birthday: Date = new Date(Date.parse(values.birthday));
-    return;
   }
 
   try {
-    const birthdayISO = values.birthday ? new Date(values.birthday).toISOString() : null;
+    console.log("Attempting fetch...");
+    const birthdayISO = values.birthday
+      ? new Date(values.birthday).toISOString()
+      : null;
 
     const response = await fetch("/api/auth/signup", {
       method: "POST",
@@ -39,8 +39,8 @@ const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
         role: "TRAINER",
       }),
     });
+
     const data = await response.json();
-    console.log(data);
 
     if (response.ok) {
       alert("Registered successfully!");
@@ -73,10 +73,19 @@ const Register: React.FC = () => {
             autoComplete="off"
           >
             <Form.Item<FieldType>
+              label="Email"
+              name="email"
+              rules={[{ required: true, message: "Please input your email!" }]}
+              className="w-full"
+            >
+              <Input className="w-full" />
+            </Form.Item>
+
+            <Form.Item<FieldType>
               label="First Name"
               name="firstname"
               rules={[
-                { required: true, message: "Please input your username!" },
+                { required: true, message: "Please input your first name!" },
               ]}
               className="w-full"
             >
@@ -87,7 +96,7 @@ const Register: React.FC = () => {
               label="Last Name"
               name="lastname"
               rules={[
-                { required: true, message: "Please input your username!" },
+                { required: true, message: "Please input your last name!" },
               ]}
               className="w-full"
             >
@@ -103,26 +112,6 @@ const Register: React.FC = () => {
               className="w-full"
             >
               <Input className="w-full" type="date" />
-            </Form.Item>
-
-            <Form.Item<FieldType>
-              label="Email"
-              name="email"
-              rules={[{ required: true, message: "Please input your email!" }]}
-              className="w-full"
-            >
-              <Input className="w-full" />
-            </Form.Item>
-
-            <Form.Item<FieldType>
-              label="Username"
-              name="username"
-              rules={[
-                { required: true, message: "Please input your username!" },
-              ]}
-              className="w-full"
-            >
-              <Input className="w-full" />
             </Form.Item>
 
             <Form.Item<FieldType>
