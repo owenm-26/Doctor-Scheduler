@@ -2,6 +2,7 @@ import cv2
 import mediapipe as mp
 import numpy as np
 import time
+from pose_data_lib import process_pose
 
 # Initialize MediaPipe Pose
 mp_pose = mp.solutions.pose
@@ -52,7 +53,10 @@ while cap.isOpened():
         )
 
         # todo: data preprocessing and classify
-        
+        model_results = process_pose(landmarks)
+
+        print(model_results)
+
 
     # Calculate elapsed time
     elapsed_time = time.time() - start_time
