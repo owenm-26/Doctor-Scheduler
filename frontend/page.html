@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webcam Pose Estimation</title>
+    <!-- Load TensorFlow.js and Pose Detection model from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tensorflow/3.18.0/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection"></script>
+</head>
+<body>
+    <h1>Webcam Pose Estimation</h1>
+    <!-- Video element to show webcam feed -->
+    <video id="video" width="640" height="480" autoplay></video>
+    <!-- Canvas element to draw detected poses -->
+    <canvas id="output" width="640" height="480"></canvas>
+
+    <script>
+        // Get references to video and canvas elements
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('output');
+        const ctx = canvas.getContext('2d'); // 2D drawing context for the canvas
+
+        // Function to set up the webcam camera
+        async function setupCamera() {
+            // Request access to the webcam
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            video.srcObject = stream; // Set the video source to the webcam stream
+            
+            // Return a promise that resolves when the video metadata is loaded
+            return new Promise(resolve => {
+                video.onloadedmetadata = () => resolve(video);
+            });
+        }
+
+        // Function to load the pose detection model
+        async function loadModel() {
+            const model = poseDetection.SupportedModels.MoveNet; // Specify the model to use
+            const detectorConfig = {
+                modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING // Configuration for the model
+            };
+            // Create and return the pose detector
+            return poseDetection.createDetector(model, detectorConfig);
+        }
+
+        // Function to detect poses from the video feed
+        async function detectPose(detector) {
+            // Estimate poses from the current video frame
+            const poses = await detector.estimatePoses(video);
+            return poses[0]; // Return the first detected pose
+        }
+
+        // Function to draw keypoints on the canvas
+        function drawKeypoints(pose) {
+            if (pose && pose.keypoints) { // Check if pose and keypoints exist
+                for (let keypoint of pose.keypoints) { // Iterate through keypoints
+                    if (keypoint.score > 0.3) { // Only draw keypoints with a confidence score above 0.3
+                        ctx.beginPath(); // Begin a new path for drawing
+                        ctx.arc(keypoint.x, keypoint.y, 5, 0, 2 * Math.PI); // Draw a circle at the keypoint's position
+                        ctx.fillStyle = 'red'; // Set the fill color to red
+                        ctx.fill(); // Fill the circle
+                    }
+                }
+            }
+        }
+
+        // Function to create the rendering loop
+        async function renderLoop(detector) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height); // Draw the current video frame on the canvas
+            
+            const pose = await detectPose(detector); // Detect the pose
+            drawKeypoints(pose); // Draw the detected keypoints on the canvas
+
+            // Request the next animation frame to continue the loop
+            requestAnimationFrame(() => renderLoop(detector));
+        }
+
+        // Main function to set everything up
+        async function main() {
+            await setupCamera(); // Set up the camera
+            const detector = await loadModel(); // Load the pose detection model
+            renderLoop(detector); // Start the rendering loop
+        }
+
+        // Start the main function
+        main();
+    </script>
+</body>
+</html>
