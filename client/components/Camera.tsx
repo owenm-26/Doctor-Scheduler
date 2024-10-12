@@ -86,6 +86,7 @@ const Camera: React.FC = () => {
     const canvas = canvasRef.current!;
     const ctx = canvas?.getContext("2d"); // Use optional chaining
     if (!ctx || !videoRef.current) return; // Early return if ctx or video is null
+
     const video = videoRef.current!;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -94,6 +95,12 @@ const Camera: React.FC = () => {
     const pose = await detectPose(detector);
     drawSkeleton(pose, ctx);
     drawKeypoints(pose, ctx);
+
+    // Capture frame and send to backend
+    const frameData = canvas.toDataURL("image/jpeg");
+
+    // Call the function to send the frame
+    await sendFrameToBackend(frameData);
 
     requestAnimationFrame(() => renderLoop(detector));
   };
@@ -111,12 +118,34 @@ const Camera: React.FC = () => {
     run();
   }, []);
 
+
+
+  const sendFrameToBackend = async (frameData: string) => {
+    console.log("sendFrameToBackend TRIGGERED!!!")
+    try {
+      const response = await fetch("http://localhost:5000/upload-frame", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ image: frameData }),
+      });
+  
+      const data = await response.json();
+      console.log("Frame sent successfully:", data);
+    } catch (error) {
+      console.error("Error sending frame:", error);
+    }
+  };
+
   return (
     <div style={{ display: "flex", justifyContent: "center", alignItems: "center"}}>
       <canvas ref={canvasRef} width={640} height={480} style={{ border: "1px solid black" }} />
       <video ref={videoRef} style={{ display: "none" }} playsInline autoPlay />
     </div>
   );
+
+  
 };
 
 export default Camera;
