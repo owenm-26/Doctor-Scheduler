@@ -16,6 +16,7 @@ model User {
   date_joined  DateTime @default(now())
   birthday     DateTime
   biography    String?
+  picture String?
   role         Role
   performances Performance[]
   movements    Movement[]
