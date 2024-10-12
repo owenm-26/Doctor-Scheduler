@@ -36,7 +36,7 @@ const Login: React.FC = () => {
                     label="Username"
                     name="username"
                     rules={[{ required: true, message: 'Please input your username!' }]}
-                    style={{ }}
+                    style={{ maxWidth: 800, width: 400}}
                     >
                     <Input />
                     </Form.Item>
@@ -45,6 +45,7 @@ const Login: React.FC = () => {
                     label="Password"
                     name="password"
                     rules={[{ required: true, message: 'Please input your password!' }]}
+                    style={{ maxWidth: 800, width: 400}}
                     >
                     <Input.Password />
                 </Form.Item>
