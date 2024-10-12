@@ -21,7 +21,6 @@ const Home: React.FC = () => {
       <Header
         style={{
           display: "flex",
-          justifyContent: "center",
           alignItems: "center",
         }}
       >
@@ -33,9 +32,8 @@ const Home: React.FC = () => {
           style={{
             display: "flex",
             alignItems: "center",
-            justifyContent: "center",
             width: "500px",
-            gap: "20px",
+            gap: "1.5rem",
           }}
         />
       </Header>
