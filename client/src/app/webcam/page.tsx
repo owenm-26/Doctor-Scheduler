@@ -1,15 +1,14 @@
 "use client";
 import { useEffect, useRef } from "react";
-import * as poseDetection from "@tensorflow-models/pose-detection";
-import "@tensorflow/tfjs-backend-webgl"; // Make sure to include this for WebGL
 import * as tf from "@tensorflow/tfjs";
+import * as poseDetection from "@tensorflow-models/pose-detection";
 
 const PoseEstimation: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   // Function to initialize TensorFlow backend
-  const initBackend = async () => {
+  const initBackend: any = async () => {
     await tf.ready(); // Ensure TensorFlow.js is ready
     await tf.setBackend("webgl"); // Set the backend to WebGL
   };
@@ -25,7 +24,7 @@ const PoseEstimation: React.FC = () => {
   };
 
   // Load the pose detection model
-  const loadModel = async () => {
+  const loadModel: any = async () => {
     const model = poseDetection.SupportedModels.MoveNet;
     const detectorConfig = {
       modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING,
@@ -84,7 +83,7 @@ const PoseEstimation: React.FC = () => {
 
   // Main function to initiate camera, model, and rendering
   useEffect(() => {
-    const runPoseEstimation = async () => {
+    const runPoseEstimation: any = async () => {
       await initBackend(); // Initialize the TensorFlow.js backend
       await setupCamera();
       const video = videoRef.current!;
