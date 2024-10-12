@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import Camera from "../Camera";
+import Camera from "../../../../components/Camera";
 import { Layout, Menu } from "antd";
 
 const Home: React.FC = () => {
@@ -35,7 +35,7 @@ const Home: React.FC = () => {
             alignItems: "center",
             justifyContent: "center",
             width: "500px",
-            gap: "20px"
+            gap: "20px",
           }}
         />
       </Header>
@@ -47,9 +47,8 @@ const Home: React.FC = () => {
         }}
       >
         <div className="w-full h-full flex justify-center items-center">
-            <Camera />
-            <div className="border border-solid w-[20%] h-[65%]">
-        </div>
+          <Camera />
+          <div className="border border-solid w-[20%] h-[65%]"></div>
         </div>
       </Content>
       <Footer style={{ textAlign: "center" }}>Streching-Pal</Footer>
