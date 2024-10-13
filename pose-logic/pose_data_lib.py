@@ -15,8 +15,6 @@ def get_classifier(embedder):
     
 
 def process_pose(landmarks):
-#   pose_embedder = FullBodyPoseEmbedder()
-#   classifier = PoseClassifier('', pose_embedder)
   pose_embedder = get_embedder()
   classifier = get_classifier(pose_embedder)
   results = classifier(pose_landmarks=landmarks)

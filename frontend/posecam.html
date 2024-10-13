@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video WebSocket Stream</title>
+</head>
+<body>
+    <video id="video" width="640" height="480" autoplay></video>
+    <canvas id="canvas" style="display:none;"></canvas>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const ws = new WebSocket('ws://localhost:8765');
+
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+                video.play();
+            })
+            .catch(err => console.error('Error accessing the camera:', err));
+
+        function sendFrame() {
+            if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                
+                canvas.toBlob(blob => {
+                    ws.send(blob);
+                }, 'image/jpeg', 0.8);
+            }
+            requestAnimationFrame(sendFrame);
+        }
+
+        ws.onopen = () => {
+            console.log('WebSocket connection established');
+            sendFrame();
+        };
+
+        ws.onerror = error => console.error('WebSocket error:', error);
+        ws.onclose = () => console.log('WebSocket connection closed');
+
+        ws.onmessage = (event) => {
+            console.log(event.data)
+        }
+    </script>
+</body>
+</html>

@@ -1,28 +1,3 @@
-import numpy as np
-from pose_classifier import PoseClassifier
-
-models = {}
-
-def get_embedder():
-  if 'embedder' not in models:
-    models['embedder'] = FullBodyPoseEmbedder()
-  return models['embedder']
-
-def get_classifier(embedder):
-  if 'classifier' not in models:
-    models['classifier'] = PoseClassifier('', embedder)
-  return models['classifier']
-    
-
-def process_frame(landmarks):
-#   pose_embedder = FullBodyPoseEmbedder()
-#   classifier = PoseClassifier('', pose_embedder)
-  pose_embedder = get_embedder()
-  classifier = get_classifier(pose_embedder)
-  results = classifier(pose_landmarks=landmarks)
-  return results
-
-
 class FullBodyPoseEmbedder(object):
   """Converts 3D pose landmarks into 3D embedding."""
 
