@@ -12,7 +12,7 @@ export async function GET(request: Request) {
 
   try {
     // Verify JWT
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!);
+    const decoded = jwt.verify(token, process.env.NEXT_PUBLIC_JWT_SECRET!);
 
     return NextResponse.json(
       { message: "This is a protected route", decoded },
