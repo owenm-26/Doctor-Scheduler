@@ -52,10 +52,12 @@ class PoseClassifier(object):
         pose_samples = []
 
         data_path = Path(pose_samples_folder)
-        labels = pd.read_csv(data_path / "labels.csv")
-        landmarks = pd.read_csv(data_path / "landmarks.csv")
+        # labels = pd.read_csv(data_path / "labels.csv")
+        # landmarks = pd.read_csv(data_path / "landmarks.csv")
 
-        for i, row in pd.concat([labels, landmarks], axis=1).iterrows():
+        combined_dataset = pd.read_csv(data_path / "combined_dataset.csv")
+
+        for i, row in combined_dataset.iterrows():
             class_name = row["pose"]
             landmarks = (
                 row.iloc[3:]
