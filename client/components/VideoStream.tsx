@@ -98,15 +98,15 @@ const VideoStream: React.FC = () => {
         <table className="w-full border-collapse border border-gray-300">
           <thead>
             <tr>
-              <th className="border px-6 py-3 bg-gray-200">Key</th>
-              <th className="border px-6 py-3 bg-gray-200">Value</th>
+              <th className="text-lg font-bold border border-gray-400 px-2 py-1">Key</th>
+              <th className="text-lg font-bold border border-gray-400 px-2 py-1">Value</th>
             </tr>
           </thead>
           <tbody>
             {Object.entries(data).map(([key, value]) => (
               <tr key={key}>
-                <td className="border px-6 py-4">{key}</td>
-                <td className="border px-6 py-4">{String(value)}</td>
+                <td className="text-lg border border-gray-400 px-2 py-1">{key}</td> {/* Use text-lg */}
+                <td className="text-lg border border-gray-400 px-2 py-1">{String(value)}</td> {/* Use text-lg */}
               </tr>
             ))}
           </tbody>
@@ -114,7 +114,7 @@ const VideoStream: React.FC = () => {
       );
     }
     return <p>No data received.</p>;
-  };
+  };  
 
   return (
     <div className="flex flex-row justify-center items-center gap-4 w-full">
