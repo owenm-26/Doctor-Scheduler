@@ -2,7 +2,7 @@
 
 import Footer from "../../components/Footer";
 import MainNavbar from "../../components/MainNavbar";
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import "./globals.css";
 
@@ -12,12 +12,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const router = useRouter();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     const cookies = document.cookie.split('; ');
-    const isLoggedIn = cookies.find(cookie => cookie.startsWith('session'));
+    const sessionCookie = cookies.find(cookie => cookie.startsWith('session'));
     console.log("Current Cookies:", cookies); // Check all cookies
-    console.log("Is Logged In:", isLoggedIn); // Check if session cookie is found
+    console.log("Is Logged In:", sessionCookie); // Check if session cookie is found
+
+    setIsLoggedIn(!!sessionCookie);
 
     const currentPath = window.location.pathname;
     console.log("Current Path:", currentPath); // Log current path
@@ -33,7 +36,7 @@ export default function RootLayout({
       <body>
         <div className="h-screen">
           <header className="h-[10%]">
-            <MainNavbar />
+            <MainNavbar isLoggedIn={isLoggedIn}/>
           </header>
           <main className="h-[80%] overflow-hidden">
             {children}

@@ -3,11 +3,15 @@ import React from "react";
 import { Layout, Menu } from "antd";
 import { useRouter } from "next/navigation";
 
-const MainHeader: React.FC = () => {
-  const { Header } = Layout;
-  const router = useRouter()
+interface MainHeaderProps {
+  isLoggedIn: boolean;
+}
 
-  const items = [
+const MainHeader: React.FC<MainHeaderProps> = ({ isLoggedIn }) => {
+  const { Header } = Layout;
+  const router = useRouter();
+
+  const loggedInItems = [
     {
       key: "1",
       label: "Home",
@@ -22,10 +26,23 @@ const MainHeader: React.FC = () => {
       key: "3",
       label: "Logout",
       onClick: () => {
-        document.cookie = "session=; expires=Thu, 01 Jan 1970 00:00:00 GMT;"; 
-        router.push("/login"); 
-      }
-    }
+        document.cookie = "session=; expires=Thu, 01 Jan 1970 00:00:00 GMT;"; // Clear the session cookie
+        router.push("/login");
+      },
+    },
+  ];
+
+  const loggedOutItems = [
+    {
+      key: "1",
+      label: "Login",
+      onClick: () => router.push("/login"),
+    },
+    {
+      key: "2",
+      label: "Register",
+      onClick: () => router.push("/register"),
+    },
   ];
 
   return (
@@ -39,7 +56,7 @@ const MainHeader: React.FC = () => {
         theme="dark"
         mode="horizontal"
         defaultSelectedKeys={["1"]}
-        items={items}
+        items={isLoggedIn ? loggedInItems : loggedOutItems} // Ternary to switch between menus
         style={{
           display: "flex",
           alignItems: "center",
