@@ -1,5 +1,5 @@
 "use client";
-import { TrainerData } from "@/app/interfaces";
+import { TrainerCardParams } from "@/app/interfaces";
 import { PlusCircleOutlined } from "@ant-design/icons";
 import { Avatar, Card } from "antd";
 import Meta from "antd/es/card/Meta";
@@ -19,13 +19,29 @@ const getRandomColor = (): string => {
   return randomColors[randomIndex];
 };
 
-const TrainerCard = ({ data }: { data: TrainerData }) => {
-  const [selected, setSelected] = useState<boolean>(false);
+const TrainerCard = ({
+  data,
+  selected,
+  setSelected,
+  index,
+}: TrainerCardParams) => {
   const [cardColor, setCardColor] = useState<string>(getRandomColor());
+
+  const handleSelect = () => {
+    if (selected == index) {
+      // If the key is already selected, remove it
+      setSelected(-1);
+    } else {
+      // If the key is not selected, add it
+      setSelected(index);
+    }
+  };
 
   useEffect(() => {
     setCardColor(getRandomColor());
   }, []);
+
+  const fullName = data.first_name + " " + data.last_name;
 
   return (
     <Card
@@ -50,9 +66,9 @@ const TrainerCard = ({ data }: { data: TrainerData }) => {
           key="select"
           style={{
             fontSize: "2rem",
-            color: selected ? "green" : "grey",
+            color: selected > 0 ? "green" : "grey",
           }}
-          onClick={() => setSelected(!selected)}
+          onClick={handleSelect}
         />,
       ]}
     >
@@ -66,7 +82,7 @@ const TrainerCard = ({ data }: { data: TrainerData }) => {
             }
           />
         }
-        title={data.first_name}
+        title={fullName}
         description={
           <div
             style={{
