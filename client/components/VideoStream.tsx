@@ -1,11 +1,32 @@
+import { VideoStreamParams } from "@/app/interfaces"; // Adjust the import path as necessary
 import { useEffect, useRef, useState } from "react";
+import { Line } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Tooltip,
+  Legend,
+} from "chart.js";
 
-const VideoStream: React.FC = () => {
+// Register the necessary components for Chart.js
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Tooltip,
+  Legend
+);
+
+const VideoStream: React.FC<VideoStreamParams> = ({ selectedStretch }) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const [wsData, setWsData] = useState<any>(null);
-  const [isConnected, setIsConnected] = useState<boolean>(false);
-  const [frameCount, setFrameCount] = useState<number>(0);
+  const [wsData, setWsData] = useState<any>(null); // State to store WebSocket data
+  const [isConnected, setIsConnected] = useState<boolean>(false); // Connection status
+  const [frameCount, setFrameCount] = useState<number>(0); // Count of frames sent
   const wsRef = useRef<WebSocket | null>(null);
 
   // Throttle time in milliseconds
@@ -27,7 +48,7 @@ const VideoStream: React.FC = () => {
     labels: [],
     datasets: [
       {
-        label: "Squats",
+        label: selectedStretch,
         data: [],
         borderColor: "rgba(255, 99, 132, 1)",
         backgroundColor: "rgba(255, 99, 132, 0.2)",
@@ -36,6 +57,17 @@ const VideoStream: React.FC = () => {
       },
     ],
   });
+  useEffect(() => {
+    setChartData((prevData) => ({
+      ...prevData,
+      datasets: [
+        {
+          ...prevData.datasets[0],
+          label: selectedStretch, // Update the label based on selectedStretch
+        },
+      ],
+    }));
+  }, [selectedStretch]);
 
   useEffect(() => {
     // Initialize WebSocket
@@ -81,7 +113,7 @@ const VideoStream: React.FC = () => {
         wsRef.current.close();
       }
     };
-  }, []); // No dependencies to ensure the WebSocket opens only once
+  }, []);
 
   const sendFrame = () => {
     const video = videoRef.current;
@@ -128,9 +160,6 @@ const VideoStream: React.FC = () => {
 
   const filterDataByStretch = (data: any): number => {
     if (!data || !selectedStretch) return 0;
-    console.log("data", data);
-    console.log(data.pushups_up);
-    console.log(selectedStretch);
 
     // Map based on selected stretch
     switch (selectedStretch) {
@@ -153,8 +182,6 @@ const VideoStream: React.FC = () => {
   };
 
   const renderWsData = (data: any) => {
-    console.log(data);
-
     const filteredScore = filterDataByStretch(data);
 
     if (filteredScore) {
@@ -177,12 +204,7 @@ const VideoStream: React.FC = () => {
       return (
         <p
           style={{
-            color:
-              filteredScore < 5
-                ? "red"
-                : filteredScore < 7
-                ? "orange"
-                : "green",
+            color: "red",
             fontSize: "1.5rem",
           }}
         >
@@ -191,6 +213,39 @@ const VideoStream: React.FC = () => {
       );
     }
   };
+
+  useEffect(() => {
+    if (wsData) {
+      const parsedData = JSON.parse(wsData);
+
+      // Get current time for the label
+      const newTimestamp = new Date().toLocaleTimeString();
+
+      // Update chart data with the new score
+      const filteredScore = filterDataByStretch(parsedData);
+
+      setChartData((prevChartData) => {
+        const updatedLabels = [...prevChartData.labels, newTimestamp];
+        const updatedData = [...prevChartData.datasets[0].data, filteredScore];
+
+        // Limit the number of data points to avoid overcrowding the chart
+        if (updatedLabels.length > 20) {
+          updatedLabels.shift(); // Remove the oldest label
+          updatedData.shift(); // Remove the oldest data point for squats
+        }
+
+        return {
+          labels: updatedLabels,
+          datasets: [
+            {
+              ...prevChartData.datasets[0],
+              data: updatedData,
+            },
+          ],
+        };
+      });
+    }
+  }, [wsData, selectedStretch]);
 
   return (
     <div className="flex flex-row justify-center items-center gap-6 w-full">
@@ -205,13 +260,31 @@ const VideoStream: React.FC = () => {
             <p>No data received yet.</p>
           )}
         </div>
-        <h4 className="text-2xl">Frames Sent: {frameCount}</h4>{" "}
-        {/* Display the count of frames sent */}
+        <h4 className="text-2xl">Frames Sent: {frameCount}</h4>
         <h4 className="text-2xl">
           Last Sent Timestamp:{" "}
           {new Date(lastSentTimeRef.current).toLocaleTimeString()}
-        </h4>{" "}
-        {/* Display last sent time */}
+        </h4>
+        {/* Render the chart */}
+        <Line
+          data={chartData}
+          options={{
+            responsive: true,
+            plugins: { legend: { display: true } },
+            scales: {
+              y1: {
+                type: "linear",
+                position: "left",
+                min: 0,
+                max: 10, // Set maximum value to 10
+                title: {
+                  display: true,
+                  text: selectedStretch || "Exercises",
+                },
+              },
+            },
+          }}
+        />
       </div>
     </div>
   );

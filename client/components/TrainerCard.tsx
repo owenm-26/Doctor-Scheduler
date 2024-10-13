@@ -56,7 +56,7 @@ const TrainerCard = ({
             height: "10rem",
           }}
         >
-          <p style={{ fontSize: "4rem" }}>
+          <p style={{ fontSize: "4rem", color: "white" }}>
             {data.first_name[0]} {data.last_name[0]}
           </p>
         </div>

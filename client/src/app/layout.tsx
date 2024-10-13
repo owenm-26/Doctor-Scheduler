@@ -63,7 +63,7 @@ export default function RootLayout({
   useEffect(() => {
     // Check login status initially
     console.log(secretKey);
-    const loggedIn = true;
+    const loggedIn = checkLoginStatus();
     const currentPath = window.location.pathname;
     console.log("Current Path:", currentPath); // Log current path
 
