@@ -73,6 +73,7 @@ const TrainerPage: React.FC = () => {
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
+          padding: "1rem 3rem",
         }}
       >
         <Typography.Title title="Trainer Page">Trainer Page</Typography.Title>
@@ -85,7 +86,14 @@ const TrainerPage: React.FC = () => {
         )}
       </div>
 
-      <div style={{ display: "flex" }}>
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
         {trainers.map((data, index) => {
           return (
             <TrainerCard
