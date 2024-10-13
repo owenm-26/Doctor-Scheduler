@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 
 export const getAllTrainers = async (): Promise<TrainerData[]> => {
   const trainers: TrainerData[] = await prisma.user.findMany({
-    where: { role: "PATIENT" },
+    where: { role: "TRAINER" },
   });
 
   return trainers;

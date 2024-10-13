@@ -262,7 +262,7 @@ const Camera: React.FC = () => {
         alignItems: "center",
       }}
     >
-      <div>
+      <div style={{ backgroundColor: "red" }}>
         Score:{" "}
         {movement
           ? `${movement}: ${movementScore.toFixed(3)}`

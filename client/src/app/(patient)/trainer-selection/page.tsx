@@ -6,11 +6,13 @@ import TrainerCard from "../../../../components/TrainerCard";
 import { Button, Typography } from "antd";
 import { ArrowRightOutlined } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
+import { getUserIdFromCookie } from "@/app/(common)/getUserId";
 
 const TrainerPage: React.FC = () => {
   const [trainers, setTrainers] = useState<TrainerData[]>([]);
   const [selected, setSelected] = useState<number>(-1);
   const [leave, setLeave] = useState<boolean>(false);
+  const [userId, setUserId] = useState<number>();
   const router = useRouter();
 
   useEffect(() => {
@@ -18,9 +20,19 @@ const TrainerPage: React.FC = () => {
     if (selected == -1) {
       return;
     }
+    const fetchUserId = async () => {
+      const userIdResult: number | null = await getUserIdFromCookie();
+      if (!userIdResult) {
+        console.error("Not able to find user");
+        return -1;
+      }
+      setUserId(userIdResult);
+    };
+    fetchUserId();
+
     const fetchSave = async () => {
       const data = {
-        userId: 1,
+        userId: userId,
         trainerId: selected,
       };
       try {

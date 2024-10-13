@@ -26,6 +26,7 @@ const TrainerCard = ({
   index,
 }: TrainerCardParams) => {
   const [cardColor, setCardColor] = useState<string>(getRandomColor());
+  console.log("data.id", data.id);
 
   const handleSelect = () => {
     if (selected == index) {
@@ -66,7 +67,7 @@ const TrainerCard = ({
           key="select"
           style={{
             fontSize: "2rem",
-            color: selected > 0 ? "green" : "grey",
+            color: selected == index ? "green" : "grey",
           }}
           onClick={handleSelect}
         />,
