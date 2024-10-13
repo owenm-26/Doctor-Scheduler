@@ -1,35 +1,52 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import type { FormProps } from "antd";
 import { Button, Form, Input } from "antd";
 
 type FieldType = {
+  firstname?: string;
+  lastname?: string;
   email?: string;
   password?: string;
+  birthday?: string;
+  role?: string;
 };
 
 const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
-  console.log("Success:", values);
+  console.log(values);
+
+  if (values.birthday) {
+    const birthday: Date = new Date;
+  }
 
   try {
     console.log("Attempting fetch...");
-    const response = await fetch("/api/auth/login", {
+    const birthdayISO = values.birthday
+      ? new Date(values.birthday).toISOString()
+      : null;
+
+    const response = await fetch("/api/auth/signup", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
+        first_name: values.firstname,
+        last_name: values.lastname,
         email: values.email,
         password: values.password,
+        birthday: birthdayISO,
         role: "PATIENT",
       }),
     });
 
     const data = await response.json();
 
+    console.log(data);
+
     if (response.ok) {
-      window.location.href = "/home";
+      window.location.href = "/login"
     } else {
       alert("Registration failed.");
     }
@@ -42,14 +59,11 @@ const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (errorInfo) => {
   console.log("Failed:", errorInfo);
 };
 
-const Login: React.FC = () => {
+const Register: React.FC = () => {
   return (
     <div className="h-full flex flex-col">
-      <div
-        className="flex-grow w-screen flex flex-col justify-center items-center gap-6
-        "
-      >
-        <h2 className="text-4xl">Login</h2>
+      <div className="flex-grow w-screen flex flex-col justify-center items-center gap-1">
+        <h2 className="text-4xl">Register</h2>
         <>
           <Form
             name="basic"
@@ -64,12 +78,43 @@ const Login: React.FC = () => {
             <Form.Item<FieldType>
               label="Email"
               name="email"
+              rules={[{ required: true, message: "Please input your email!" }]}
+              className="w-full"
+            >
+              <Input className="w-full" />
+            </Form.Item>
+
+            <Form.Item<FieldType>
+              label="First Name"
+              name="firstname"
               rules={[
-                { required: true, message: "Please input your email!" },
+                { required: true, message: "Please input your first name!" },
               ]}
               className="w-full"
             >
               <Input className="w-full" />
+            </Form.Item>
+
+            <Form.Item<FieldType>
+              label="Last Name"
+              name="lastname"
+              rules={[
+                { required: true, message: "Please input your last name!" },
+              ]}
+              className="w-full"
+            >
+              <Input className="w-full" />
+            </Form.Item>
+
+            <Form.Item<FieldType>
+              label="Birthday"
+              name="birthday"
+              rules={[
+                { required: true, message: "Please input your birthday!" },
+              ]}
+              className="w-full"
+            >
+              <Input className="w-full" type="date" />
             </Form.Item>
 
             <Form.Item<FieldType>
@@ -83,22 +128,13 @@ const Login: React.FC = () => {
               <Input.Password className="w-full" />
             </Form.Item>
 
-            <Form.Item className="w-full flex justify-end">
-              <a
-                href="/register-onboard"
-                className="text-blue-500 hover:underline"
-              >
-                Not a user? Register here
-              </a>
-            </Form.Item>
-
             <Form.Item className="w-[40%]">
               <Button
                 className="w-full max-w-lg rounded-md p-4"
                 type="primary"
                 htmlType="submit"
               >
-                Login
+                Register
               </Button>
             </Form.Item>
           </Form>
@@ -108,4 +144,4 @@ const Login: React.FC = () => {
   );
 };
 
-export default Login;
+export default Register;

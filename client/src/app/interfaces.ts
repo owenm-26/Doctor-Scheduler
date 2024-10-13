@@ -4,4 +4,6 @@ export interface TrainerData {
   email: string;
   biography: string | null;
   date_joined: Date;
+  picture: string | null;
 }
+
