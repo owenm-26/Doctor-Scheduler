@@ -2,6 +2,7 @@
 import React from "react";
 import { Layout } from "antd";
 import VideoStream from "../../../../components/VideoStream";
+import Camera from "../../../../components/Camera";
 
 const Home: React.FC = () => {
   const { Content } = Layout;
