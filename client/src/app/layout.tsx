@@ -3,7 +3,7 @@
 import Footer from "../../components/Footer";
 import MainNavbar from "../../components/MainNavbar";
 import { useEffect, useState } from 'react';
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from 'next/navigation';
 import jwt from "jsonwebtoken";
 import "./globals.css";
 
@@ -19,36 +19,34 @@ export default function RootLayout({
   const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const secretKey = process.env.NEXT_PUBLIC_JWT_SECRET;
-  const [userId, setUserId] = useState<number>(-1);
-  const pathname = usePathname();
+  const [userId, setUserId] = useState(false);
 
   const checkLoginStatus = () => {
     const cookies = document.cookie.split("; ");
     const sessionCookie = cookies.find((cookie) =>
       cookie.startsWith("session")
     );
-
+  
     if (!sessionCookie) {
       setIsLoggedIn(false);
       return false;
     }
-
+  
     const token = sessionCookie.split("=")[1];
-
+  
     if (!secretKey) {
       console.error("JWT secret key is undefined");
       setIsLoggedIn(false);
       return false;
     }
-
+  
     try {
       // Verify and decode the JWT
       const decoded = jwt.verify(token, secretKey) as DecodedJWT;
-
+  
       // Check if decoded is an object and has userId
-      if (decoded && decoded.userId) {
+      if (decoded && typeof decoded === 'object' && decoded.userId) {
         setIsLoggedIn(true);
-        setUserId(Number(decoded.userId));
         return true;
       } else {
         setIsLoggedIn(false);
@@ -63,9 +61,10 @@ export default function RootLayout({
 
   useEffect(() => {
     // Check login status initially
-    // const loggedIn = checkLoginStatus();
-    const loggedIn = true;
+    console.log(secretKey);
+    const loggedIn = checkLoginStatus();
     const currentPath = window.location.pathname;
+    console.log("Current Path:", currentPath); // Log current path
 
     if (
       !loggedIn &&
@@ -110,16 +109,10 @@ export default function RootLayout({
           <header className="h-[10%]">
             <MainNavbar isLoggedIn={isLoggedIn} onLogout={handleLogout} />
           </header>
-          {pathname.endsWith("trainer-selection") ? (
-            <main className="h-[80%]">{children}</main>
-          ) : (
-            <div>
-              <main className="h-[80%] overflow-hidden">{children}</main>
-              <footer className="h-[10%]">
-                <Footer />
-              </footer>
-            </div>
-          )}
+          <main className="h-[80%] overflow-hidden">{children}</main>
+          <footer className="h-[10%]">
+            <Footer />
+          </footer>
         </div>
       </body>
     </html>

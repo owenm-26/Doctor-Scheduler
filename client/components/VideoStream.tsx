@@ -95,18 +95,18 @@ const VideoStream: React.FC = () => {
   const renderWsData = (data: any) => {
     if (typeof data === 'object' && data !== null) {
       return (
-        <table className="w-full border-collapse border border-gray-300">
+        <table className="w-full border border-gray-300 border-collapse">
           <thead>
-            <tr>
+            <tr className="bg-gray-100"> {/* Optional: add background for header */}
               <th className="text-lg font-bold border border-gray-400 px-2 py-1">Key</th>
               <th className="text-lg font-bold border border-gray-400 px-2 py-1">Value</th>
             </tr>
           </thead>
           <tbody>
             {Object.entries(data).map(([key, value]) => (
-              <tr key={key}>
-                <td className="text-lg border border-gray-400 px-2 py-1">{key}</td> {/* Use text-lg */}
-                <td className="text-lg border border-gray-400 px-2 py-1">{String(value)}</td> {/* Use text-lg */}
+              <tr key={key} className="even:bg-gray-50"> {/* Optional: zebra striping */}
+                <td className="text-lg border border-gray-400 px-2 py-1">{key}</td>
+                <td className="text-lg border border-gray-400 px-2 py-1">{String(value)}</td>
               </tr>
             ))}
           </tbody>
@@ -114,10 +114,10 @@ const VideoStream: React.FC = () => {
       );
     }
     return <p>No data received.</p>;
-  };  
+  };   
 
   return (
-    <div className="flex flex-row justify-center items-center gap-4 w-full">
+    <div className="flex flex-row justify-center items-center gap-6 w-full">
         <video ref={videoRef} width="640" height="480" autoPlay></video>
         <canvas ref={canvasRef} style={{ display: 'none' }}></canvas>
         <div className="flex flex-col gap-2 w-full h-full max-w-lg"> 
