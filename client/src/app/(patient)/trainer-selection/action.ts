@@ -12,6 +12,23 @@ export const getAllTrainers = async (): Promise<TrainerData[]> => {
   return trainers;
 };
 
+export const getMyTrainer = async (userId: number): Promise<number | null> => {
+  const myTrainer = await prisma.user.findFirst({
+    where: {
+      id: userId, // The user whose trainer you are querying
+    },
+    select: {
+      trainer: {
+        select: {
+          id: true,
+        },
+      },
+    },
+  });
+
+  return myTrainer?.trainer?.id || null;
+};
+
 // export const saveTrainer = async (data: SaveTrainerParams) => {
 //   const { userId, trainerId } = data;
 //   const result = await prisma.user.update({
