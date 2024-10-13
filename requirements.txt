@@ -4,3 +4,4 @@ aiohttp
 aiortc
 websockets
 pandas
+PyQt5
