@@ -1,6 +1,5 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
 import type { FormProps } from "antd";
 import { Button, Form, Input } from "antd";
 
@@ -46,7 +45,7 @@ const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
     console.log(data);
 
     if (response.ok) {
-      window.location.href = "/login"
+      window.location.href = "/train-selection"
     } else {
       alert("Registration failed.");
     }

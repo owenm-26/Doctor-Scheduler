@@ -59,6 +59,7 @@ export async function POST(request: Request) {
       { message: "Signup successful" },
       { status: 200 }
     );
+    
     cookies().set("session", token, {
       httpOnly: true, // Not accessible via JavaScript
       secure: process.env.NODE_ENV === "production", // Only use Secure in production
