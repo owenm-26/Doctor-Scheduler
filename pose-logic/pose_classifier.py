@@ -95,7 +95,7 @@ class PoseClassifier(object):
 
     pose_samples = []
 
-    data_path = Path('/Users/kinshu/Desktop/projects/Streching-Pal/pose-logic/data/excercise-recognition')
+    data_path = Path('./pose-logic/data/excercise-recognition')
     labels = pd.read_csv(data_path / 'labels.csv')
     landmarks = pd.read_csv(data_path / 'landmarks.csv')
 

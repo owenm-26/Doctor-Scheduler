@@ -13,7 +13,7 @@ def get_embedder():
 def get_classifier(embedder):
     if "classifier" not in models:
         models["classifier"] = PoseClassifier(
-            "/Users/kinshu/Desktop/projects/Streching-Pal/pose-logic/data/excercise-recognition",
+            "./pose-logic/data/excercise-recognition",
             embedder,
         )
     return models["classifier"]
