@@ -167,6 +167,19 @@ const Camera: React.FC = () => {
       setGrades(receivedData);
     };
 
+       
+    websocketRef.current.onmessage = (event) => {
+      if (event.data instanceof Blob) {
+        event.data.arrayBuffer().then(buffer => {
+          const array = Array.from(new Float32Array(buffer));
+          console.log("Received array:", array);
+          console.log("Array length:", array.length);
+        });
+      } else {
+        console.log("Received non-binary data:", event.data);
+      }
+    };
+
     websocketRef.current.onclose = () => {
       console.log("Disconnected from WebSocket server");
     };
