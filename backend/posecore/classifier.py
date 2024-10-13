@@ -11,7 +11,6 @@ class PoseSample(object):
         self.name = name
         self.landmarks = landmarks
         self.class_name = class_name
-
         self.embedding = embedding
 
 
@@ -50,21 +49,6 @@ class PoseClassifier(object):
     def _load_pose_samples(
         self, pose_samples_folder, n_landmarks, n_dimensions, pose_embedder
     ):
-        """Loads pose samples from a given folder.
-
-        Required folder structure:
-          neutral_standing.csv
-          pushups_down.csv
-          pushups_up.csv
-          squats_down.csv
-          ...
-
-        Required CSV structure:
-          sample_00001,x1,y1,z1,x2,y2,z2,....
-          sample_00002,x1,y1,z1,x2,y2,z2,....
-          ...
-        """
-
         pose_samples = []
 
         data_path = Path(pose_samples_folder)
@@ -96,7 +80,7 @@ class PoseClassifier(object):
         for sample in self._pose_samples:
             # Find nearest poses for the target one.
             pose_landmarks = sample.landmarks.copy()
-            pose_classification = self.__call__(pose_landmarks)
+            pose_classification = self.classify(pose_landmarks)
             class_names = [
                 class_name
                 for class_name, count in pose_classification.items()
@@ -112,7 +96,7 @@ class PoseClassifier(object):
 
         return outliers
 
-    def __call__(self, pose_landmarks):
+    def classify(self, pose_landmarks):
         """Classifies given pose.
 
         Classification is done in two stages:

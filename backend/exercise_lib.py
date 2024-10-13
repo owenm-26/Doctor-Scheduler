@@ -20,7 +20,9 @@ def get_classifier(embedder):
 
 
 def detect_exercise(landmarks):
-    pose_embedder = get_embedder()
-    classifier = get_classifier(pose_embedder)
-    results = classifier(pose_landmarks=landmarks)
-    return results
+    if landmarks is not None and len(landmarks) > 0:
+        pose_embedder = get_embedder()
+        classifier = get_classifier(pose_embedder)
+        results = classifier.classify(pose_landmarks=landmarks)
+        return results
+    return {}
