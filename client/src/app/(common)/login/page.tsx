@@ -29,7 +29,7 @@ const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
     const data = await response.json();
 
     if (response.ok) {
-      
+      window.location.href = "/home";
     } else {
       alert("Registration failed.");
     }

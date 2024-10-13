@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import type { FormProps } from "antd";
 import { Button, Form, Input } from "antd";
 
@@ -14,9 +14,10 @@ type FieldType = {
 };
 
 const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
+  console.log(values);
 
   if (values.birthday) {
-    const birthday: Date = new Date(Date.parse(values.birthday));
+    const birthday: Date = new Date;
   }
 
   try {
@@ -42,8 +43,10 @@ const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
 
     const data = await response.json();
 
+    console.log(data);
+
     if (response.ok) {
-      alert("Registered successfully!");
+      window.location.href = "/login"
     } else {
       alert("Registration failed.");
     }
