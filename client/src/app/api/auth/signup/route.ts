@@ -48,7 +48,7 @@ export async function POST(request: Request) {
     // Generate JWT
     const token = jwt.sign(
       { userId: user.id, email: user.email },
-      process.env.JWT_SECRET!,
+      process.env.NEXT_PUBLIC_JWT_SECRET!,
       {
         expiresIn: "1h",
       }
@@ -59,8 +59,9 @@ export async function POST(request: Request) {
       { message: "Signup successful" },
       { status: 200 }
     );
+
     cookies().set("session", token, {
-      httpOnly: true, // Not accessible via JavaScript
+      httpOnly: false, // Not accessible via JavaScript
       secure: process.env.NODE_ENV === "production", // Only use Secure in production
       sameSite: "strict", // Protect against CSRF attacks
       maxAge: 60 * 60, // Cookie expires in 1 hour

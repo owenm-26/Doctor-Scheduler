@@ -14,9 +14,10 @@ type FieldType = {
 };
 
 const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
+  console.log(values);
 
   if (values.birthday) {
-    const birthday: Date = new Date(Date.parse(values.birthday));
+    const birthday: Date = new Date;
   }
 
   try {
@@ -36,14 +37,16 @@ const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
         email: values.email,
         password: values.password,
         birthday: birthdayISO,
-        role: "PATIENT",
+        role: "TRAINER",
       }),
     });
 
     const data = await response.json();
 
+    console.log(data);
+
     if (response.ok) {
-      alert("Registered successfully!");
+      window.location.href = "/login"
     } else {
       alert("Registration failed.");
     }
@@ -58,7 +61,7 @@ const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (errorInfo) => {
 
 const Register: React.FC = () => {
   return (
-    <div className="h-screen flex flex-col">
+    <div className="h-full flex flex-col">
       <div
         className="flex-grow w-screen flex flex-col justify-center items-center gap-6
         "
@@ -75,6 +78,15 @@ const Register: React.FC = () => {
             onFinishFailed={onFinishFailed}
             autoComplete="off"
           >
+            <Form.Item<FieldType>
+              label="Email"
+              name="email"
+              rules={[{ required: true, message: "Please input your email!" }]}
+              className="w-full"
+            >
+              <Input className="w-full" />
+            </Form.Item>
+
             <Form.Item<FieldType>
               label="First Name"
               name="firstname"
@@ -98,14 +110,14 @@ const Register: React.FC = () => {
             </Form.Item>
 
             <Form.Item<FieldType>
-              label="Username"
-              name="username"
+              label="Birthday"
+              name="birthday"
               rules={[
-                { required: true, message: "Please input your username!" },
+                { required: true, message: "Please input your birthday!" },
               ]}
               className="w-full"
             >
-              <Input className="w-full" />
+              <Input className="w-full" type="date" />
             </Form.Item>
 
             <Form.Item<FieldType>
