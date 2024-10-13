@@ -1,6 +1,6 @@
 import numpy as np
-from backend.posecore.classifier import PoseClassifier
-from backend.posecore.embedder import FullBodyPoseEmbedder
+from posecore.classifier import PoseClassifier
+from posecore.embedder import FullBodyPoseEmbedder
 
 models = {}
 

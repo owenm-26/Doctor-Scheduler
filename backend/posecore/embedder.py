@@ -1,3 +1,5 @@
+import numpy as np
+
 class FullBodyPoseEmbedder(object):
   """Converts 3D pose landmarks into 3D embedding."""
 
