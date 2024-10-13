@@ -19,34 +19,35 @@ export default function RootLayout({
   const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const secretKey = process.env.NEXT_PUBLIC_JWT_SECRET;
-  const [userId, setUserId] = useState(false);
+  const [userId, setUserId] = useState<number>(-1);
 
   const checkLoginStatus = () => {
     const cookies = document.cookie.split("; ");
     const sessionCookie = cookies.find((cookie) =>
       cookie.startsWith("session")
     );
-  
+
     if (!sessionCookie) {
       setIsLoggedIn(false);
       return false;
     }
-  
+
     const token = sessionCookie.split("=")[1];
-  
+
     if (!secretKey) {
       console.error("JWT secret key is undefined");
       setIsLoggedIn(false);
       return false;
     }
-  
+
     try {
       // Verify and decode the JWT
       const decoded = jwt.verify(token, secretKey) as DecodedJWT;
-  
+
       // Check if decoded is an object and has userId
-      if (decoded && typeof decoded === 'object' && decoded.userId) {
+      if (decoded && decoded.userId) {
         setIsLoggedIn(true);
+        setUserId(Number(decoded.userId));
         return true;
       } else {
         setIsLoggedIn(false);
@@ -61,10 +62,9 @@ export default function RootLayout({
 
   useEffect(() => {
     // Check login status initially
-    console.log(secretKey);
-    const loggedIn = checkLoginStatus();
+    // const loggedIn = checkLoginStatus();
+    const loggedIn = true;
     const currentPath = window.location.pathname;
-    console.log("Current Path:", currentPath); // Log current path
 
     if (
       !loggedIn &&

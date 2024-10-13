@@ -73,7 +73,7 @@ const TrainerPage: React.FC = () => {
         )}
       </div>
 
-      <div>
+      <div style={{ display: "flex" }}>
         {trainers.map((data, index) => {
           return (
             <TrainerCard

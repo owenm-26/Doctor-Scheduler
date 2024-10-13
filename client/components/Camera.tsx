@@ -97,6 +97,9 @@ const Camera: React.FC = () => {
   const setupCamera = async (): Promise<HTMLVideoElement> => {
     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
     const video = videoRef.current!;
+    if (!stream) {
+      return new HTMLVideoElement();
+    }
     video.srcObject = stream;
     return new Promise((resolve) => {
       video.onloadedmetadata = () => resolve(video);

@@ -15,9 +15,9 @@ type FieldType = {
 const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
   console.log(values);
 
-  if (values.birthday) {
-    const birthday: Date = new Date;
-  }
+  // if (values.birthday) {
+  //   const birthday: Date = new Date;
+  // }
 
   try {
     console.log("Attempting fetch...");
@@ -45,7 +45,7 @@ const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
     console.log(data);
 
     if (response.ok) {
-      window.location.href = "/train-selection"
+      window.location.href = "/trainer-selection";
     } else {
       alert("Registration failed.");
     }

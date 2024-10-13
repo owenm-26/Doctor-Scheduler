@@ -48,6 +48,7 @@ export async function POST(request: Request) {
       { message: "Login successful", token },
       { status: 200 }
     );
+    console.log(response);
 
     // Set the cookie with the JWT
     cookies().set("session", token, {
