@@ -18,7 +18,6 @@ const Home: React.FC = () => {
       >
         <div className="w-full h-full flex justify-center items-center">
           <VideoStream />
-          {/* <Camera /> */}
           <div className="border border-solid w-[20%] h-[65%]"></div>
         </div>
       </Content>
