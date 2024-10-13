@@ -1,5 +1,3 @@
-// components/VideoStream.tsx
-
 import { useEffect, useRef, useState } from 'react';
 
 const VideoStream: React.FC = () => {
@@ -7,7 +5,12 @@ const VideoStream: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [wsData, setWsData] = useState<any>(null); // State to store WebSocket data
   const [isConnected, setIsConnected] = useState<boolean>(false); // Connection status
+  const [frameCount, setFrameCount] = useState<number>(0); // Count of frames sent
   const wsRef = useRef<WebSocket | null>(null);
+
+  // Throttle time in milliseconds
+  const throttleTime = 1000; // Send frames every 1000 ms (1 second)
+  const lastSentTimeRef = useRef<number>(0);
 
   useEffect(() => {
     // Initialize WebSocket
@@ -54,46 +57,77 @@ const VideoStream: React.FC = () => {
   }, []);
 
   const sendFrame = () => {
-  const video = videoRef.current;
-  const canvas = canvasRef.current;
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
 
-  if (video && video.readyState === video.HAVE_ENOUGH_DATA && canvas) {
-    const ctx = canvas.getContext('2d');
+    if (video && video.readyState === video.HAVE_ENOUGH_DATA && canvas) {
+      const ctx = canvas.getContext('2d');
 
-    if (ctx) {
-      // Set canvas dimensions to match the video dimensions
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      
-      // Draw the current video frame onto the canvas
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      if (ctx) {
+        // Set canvas dimensions to match the video dimensions
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
 
-      // Convert the canvas content to a Blob (JPEG image) and send it through WebSocket
-      canvas.toBlob((blob) => {
-        if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-          if (blob) {
-            wsRef.current.send(blob);
-          }
+        // Draw the current video frame onto the canvas
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        // Check if enough time has passed to send the frame
+        const currentTime = Date.now();
+        if (currentTime - lastSentTimeRef.current > throttleTime) {
+          lastSentTimeRef.current = currentTime;
+
+          // Convert the canvas content to a Blob (JPEG image) and send it through WebSocket
+          canvas.toBlob((blob) => {
+            if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+              if (blob) {
+                wsRef.current.send(blob);
+                setFrameCount((prevCount) => prevCount + 1); // Increment frame count
+              }
+            }
+          }, 'image/jpeg', 0.8);
         }
-      }, 'image/jpeg', 0.8);
+      }
     }
-  }
 
-  requestAnimationFrame(sendFrame);
-};
+    requestAnimationFrame(sendFrame);
+  };
 
+  const renderWsData = (data: any) => {
+    if (typeof data === 'object' && data !== null) {
+      return (
+        <table className="w-full border-collapse border border-gray-300">
+          <thead>
+            <tr>
+              <th className="border px-6 py-3 bg-gray-200">Key</th>
+              <th className="border px-6 py-3 bg-gray-200">Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            {Object.entries(data).map(([key, value]) => (
+              <tr key={key}>
+                <td className="border px-6 py-4">{key}</td>
+                <td className="border px-6 py-4">{String(value)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      );
+    }
+    return <p>No data received.</p>;
+  };
 
   return (
-    <div>
-      <video ref={videoRef} width="640" height="480" autoPlay></video>
-      <canvas ref={canvasRef} style={{ display: 'none' }}></canvas>
-
-      {/* Render the WebSocket data and connection status for debugging */}
-      <div>
-        <h3>WebSocket Connection Status: {isConnected ? 'Connected' : 'Disconnected'}</h3>
-        <h4>Received Data:</h4>
-        <pre>{JSON.stringify(wsData, null, 2)}</pre>
-      </div>
+    <div className="flex flex-row justify-center items-center gap-4 w-full">
+        <video ref={videoRef} width="640" height="480" autoPlay></video>
+        <canvas ref={canvasRef} style={{ display: 'none' }}></canvas>
+        <div className="flex flex-col gap-2 w-full h-full max-w-lg"> 
+            <h2 className="text-4xl">Received Data:</h2>
+            <div className="overflow-auto max-h-96"> 
+            {wsData ? renderWsData(JSON.parse(wsData)) : <p>No data received yet.</p>}
+            </div>
+            <h4 className="text-2xl">Frames Sent: {frameCount}</h4> {/* Display the count of frames sent */}
+            <h4 className="text-2xl">Last Sent Timestamp: {new Date(lastSentTimeRef.current).toLocaleTimeString()}</h4> {/* Display last sent time */}
+        </div>
     </div>
   );
 };
