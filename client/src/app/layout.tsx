@@ -3,7 +3,7 @@
 import Footer from "../../components/Footer";
 import MainNavbar from "../../components/MainNavbar";
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from "next/navigation";
 import jwt from "jsonwebtoken";
 import "./globals.css";
 
@@ -20,6 +20,7 @@ export default function RootLayout({
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const secretKey = process.env.NEXT_PUBLIC_JWT_SECRET;
   const [userId, setUserId] = useState(false);
+  const pathname = usePathname();
 
   const checkLoginStatus = () => {
     const cookies = document.cookie.split("; ");
@@ -109,7 +110,12 @@ export default function RootLayout({
           <header className="h-[10%]">
             <MainNavbar isLoggedIn={isLoggedIn} onLogout={handleLogout} />
           </header>
-          <main className="h-[80%] overflow-hidden">{children}</main>
+          {pathname.endsWith("/trainer-selection") ? (
+            <main className="h-[80%]">{children}</main>
+          ) : (
+            <main className="h-[80%] overflow-hidden">{children}</main>
+          )}
+
           <footer className="h-[10%]">
             <Footer />
           </footer>

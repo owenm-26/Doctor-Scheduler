@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Layout } from "antd";
 import VideoStream from "../../../../components/VideoStream";
 import CustomDropdown from "../../../../components/Dropdown";
+import PTButton from "../../../../components/TrainerButton";
 
 const Home: React.FC = () => {
   const { Content } = Layout;
@@ -16,8 +17,10 @@ const Home: React.FC = () => {
           alignItems: "center",
           justifyContent: "end",
           margin: "2rem 4rem ",
+          gap: "3rem",
         }}
       >
+        <PTButton />
         <CustomDropdown setSelected={setSelected} />
       </div>
 

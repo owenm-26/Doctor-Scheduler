@@ -1,7 +1,7 @@
 "use client";
 import { TrainerData } from "@/app/interfaces";
 import { useEffect, useState } from "react";
-import { getAllTrainers } from "./action";
+import { getAllTrainers, getMyTrainer } from "./action";
 import TrainerCard from "../../../../components/TrainerCard";
 import { Button, Typography } from "antd";
 import { ArrowRightOutlined } from "@ant-design/icons";
@@ -61,6 +61,13 @@ const TrainerPage: React.FC = () => {
         setTrainers(result);
       }
 
+      if (userId && userId > 0) {
+        const myTrainer: number | null = await getMyTrainer(userId);
+        if (myTrainer) {
+          setSelected(myTrainer);
+        }
+      }
+
       return;
     };
     getTrainers();
@@ -79,7 +86,7 @@ const TrainerPage: React.FC = () => {
         <Typography.Title title="Trainer Page">Trainer Page</Typography.Title>
         {selected > 0 ? (
           <Button onClick={() => setLeave(true)}>
-            Continue <ArrowRightOutlined />{" "}
+            Save <ArrowRightOutlined />{" "}
           </Button>
         ) : (
           <></>
