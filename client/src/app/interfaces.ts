@@ -29,3 +29,6 @@ export interface PoseGrade {
 export interface CustomDropdownParams {
   setSelected: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
+export interface VideoStreamParams {
+  selectedStretch: string;
+}

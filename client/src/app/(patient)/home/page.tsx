@@ -6,7 +6,7 @@ import CustomDropdown from "../../../../components/Dropdown";
 
 const Home: React.FC = () => {
   const { Content } = Layout;
-  const [selected, setSelected] = useState<string>();
+  const [selected, setSelected] = useState<string>("Push-Ups");
 
   return (
     <Layout className="h-full">
@@ -29,7 +29,7 @@ const Home: React.FC = () => {
         }}
       >
         <div className="w-full h-full flex justify-center items-center">
-          <VideoStream />
+          <VideoStream selectedStretch={selected} />
         </div>
       </Content>
     </Layout>

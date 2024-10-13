@@ -14,12 +14,12 @@ const CustomDropdown: React.FC<CustomDropdownParams> = ({ setSelected }) => {
     {
       key: "1",
       label: "Push-Ups",
-      onClick: () => handleSelect("Push-ups"),
+      onClick: () => handleSelect("Push-Ups"),
     },
     {
       key: "2",
-      label: "Pull-ups",
-      onClick: () => handleSelect("Pull-ups"),
+      label: "Pull-Ups",
+      onClick: () => handleSelect("Pull-Ups"),
     },
     {
       key: "3",
@@ -31,6 +31,11 @@ const CustomDropdown: React.FC<CustomDropdownParams> = ({ setSelected }) => {
       label: "Jumping Jacks",
       onClick: () => handleSelect("Jumping Jacks"),
     },
+    // {
+    //   key: "5",
+    //   label: "Sit-Ups",
+    //   onClick: () => handleSelect("Sit-Ups"),
+    // },
   ];
 
   return (
