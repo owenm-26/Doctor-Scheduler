@@ -134,9 +134,37 @@ const VideoStream: React.FC<VideoStreamParams> = ({ selectedStretch }) => {
     const filteredScore = filterDataByStretch(data);
 
     if (filteredScore) {
-      return <p>Score: {filteredScore}</p>;
+      return (
+        <p
+          style={{
+            color:
+              filteredScore < 5
+                ? "red"
+                : filteredScore < 7
+                ? "orange"
+                : "green",
+            fontSize: "1.5rem",
+          }}
+        >
+          Score: {filteredScore}
+        </p>
+      );
     } else {
-      return <p>No matching data for the selected stretch.</p>;
+      return (
+        <p
+          style={{
+            color:
+              filteredScore < 5
+                ? "red"
+                : filteredScore < 7
+                ? "orange"
+                : "green",
+            fontSize: "1.5rem",
+          }}
+        >
+          Score: 0
+        </p>
+      );
     }
   };
 
@@ -146,7 +174,10 @@ const VideoStream: React.FC<VideoStreamParams> = ({ selectedStretch }) => {
       <canvas ref={canvasRef} style={{ display: "none" }}></canvas>
       <div className="flex flex-col gap-2 w-full h-full max-w-lg">
         <h2 className="text-4xl">Received Data:</h2>
-        <div className="overflow-auto max-h-96">
+        <div
+          className="overflow-auto max-h-96 "
+          style={{ fontSize: "1.5  rem" }}
+        >
           {wsData ? (
             renderWsData(JSON.parse(wsData))
           ) : (
