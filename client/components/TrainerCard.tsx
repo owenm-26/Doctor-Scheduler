@@ -89,6 +89,7 @@ const TrainerCard = ({
               height: "4rem", // Set a fixed height for the biography
             }}
           >
+            <p style={{}}>{data.email}</p>
             {data.biography}
           </div>
         }
