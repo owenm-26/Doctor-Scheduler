@@ -51,7 +51,7 @@ export async function POST(request: Request) {
 
     // Set the cookie with the JWT
     cookies().set("session", token, {
-      httpOnly: true, // Not accessible via JavaScript
+      httpOnly: false, // Not accessible via JavaScript
       secure: process.env.NODE_ENV === "production", // Only use Secure in production
       sameSite: "strict", // Protect against CSRF attacks
       maxAge: 60 * 60, // Cookie expires in 1 hour
