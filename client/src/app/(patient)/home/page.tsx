@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
-import Camera from "../../../../components/Camera";
 import { Layout } from "antd";
+import VideoStream from "../../../../components/VideoStream";
 
 const Home: React.FC = () => {
   const { Content } = Layout;
@@ -16,7 +16,7 @@ const Home: React.FC = () => {
         }}
       >
         <div className="w-full h-full flex justify-center items-center">
-          <Camera />
+          <VideoStream />
           <div className="border border-solid w-[20%] h-[65%]"></div>
         </div>
       </Content>
