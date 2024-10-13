@@ -1,14 +1,26 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { Layout } from "antd";
 import VideoStream from "../../../../components/VideoStream";
-import Camera from "../../../../components/Camera";
+import CustomDropdown from "../../../../components/Dropdown";
 
 const Home: React.FC = () => {
   const { Content } = Layout;
+  const [selected, setSelected] = useState<string>();
 
   return (
     <Layout className="h-full">
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "end",
+          margin: "2rem 4rem ",
+        }}
+      >
+        <CustomDropdown setSelected={setSelected} />
+      </div>
+
       <Content
         style={{
           display: "flex",
@@ -18,7 +30,6 @@ const Home: React.FC = () => {
       >
         <div className="w-full h-full flex justify-center items-center">
           <VideoStream />
-          <div className="border border-solid w-[20%] h-[65%]"></div>
         </div>
       </Content>
     </Layout>

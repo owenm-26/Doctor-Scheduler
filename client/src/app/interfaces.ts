@@ -25,3 +25,7 @@ export interface PoseGrade {
   name: string;
   grade: number;
 }
+
+export interface CustomDropdownParams {
+  setSelected: React.Dispatch<React.SetStateAction<string | undefined>>;
+}
