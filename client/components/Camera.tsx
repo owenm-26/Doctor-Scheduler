@@ -10,7 +10,11 @@ const Camera: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const websocketRef = useRef<WebSocket | null>(null);
-  const [grades, setGrades] = useState<PoseGrade[]>([]);
+  const [grades, setGrades] = useState<{ [key: string]: { accuracy: number } }>(
+    {}
+  );
+  const lastReceivedTimeRef = useRef<number>(0);
+  const throttleTime = 10; // Throttle updates to every 2 seconds
 
   // Draw keypoints on the canvas
   const drawKeypoints = (
@@ -132,7 +136,6 @@ const Camera: React.FC = () => {
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
     const pose = await detectPose(detector);
-    // Optionally draw the detected pose
     drawSkeleton(pose, ctx);
     drawKeypoints(pose, ctx);
 
@@ -159,12 +162,23 @@ const Camera: React.FC = () => {
     };
 
     websocketRef.current.onmessage = (event) => {
-      // Receive JSON data from the backend
-      const receivedData = JSON.parse(event.data);
-      console.log("Received accuracy grades:", receivedData);
+      const currentTime = Date.now();
 
-      // Update state with received grades
-      setGrades(receivedData);
+      // Throttle updates
+      if (currentTime - lastReceivedTimeRef.current > throttleTime) {
+        lastReceivedTimeRef.current = currentTime;
+
+        // Receive JSON data from the backend
+        const receivedData = JSON.parse(event.data);
+        console.log("Received accuracy grades:", receivedData);
+
+        // Update state with received grades
+        setGrades((prevGrades) => ({
+          ...prevGrades,
+          ...receivedData,
+        }));
+        setGrades(receivedData);
+      }
     };
 
        
@@ -193,7 +207,24 @@ const Camera: React.FC = () => {
     };
   }, []);
 
-  //const findBestGrade = () => {};
+  const findMaxAccuracy = (grades: {
+    [key: string]: { accuracy: number };
+  }): PoseGrade | null => {
+    let maxPose: string | null = null;
+    let maxAccuracy = -Infinity;
+
+    // Iterate through the poses and find the maximum accuracy
+    for (const pose in grades) {
+      if (grades[pose].accuracy > maxAccuracy) {
+        maxAccuracy = grades[pose].accuracy;
+        maxPose = pose;
+      }
+    }
+
+    return maxPose ? { name: maxPose, grade: maxAccuracy } : null;
+  };
+
+  const maxAccuracyPose = findMaxAccuracy(grades);
 
   return (
     <div
@@ -203,7 +234,12 @@ const Camera: React.FC = () => {
         alignItems: "center",
       }}
     >
-      {grades ? <div>Grade: {}</div> : <></>}
+      <div>
+        Maximum Accuracy:{" "}
+        {maxAccuracyPose
+          ? `${maxAccuracyPose.name}: ${maxAccuracyPose.grade.toFixed(3)}`
+          : "No data available"}
+      </div>
       <canvas
         ref={canvasRef}
         width={640}
