@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import * as poseDetection from "@tensorflow-models/pose-detection";
 import "@tensorflow/tfjs-backend-webgl";
 import * as tf from "@tensorflow/tfjs";
+import { useWebRTCSender } from "./scripts"
 
 const Camera: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -87,6 +88,8 @@ const Camera: React.FC = () => {
     const ctx = canvas?.getContext("2d"); // Use optional chaining
     if (!ctx || !videoRef.current) return; // Early return if ctx or video is null
     const video = videoRef.current!;
+    let res = await useWebRTCSender(video)
+    console.log(res)
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
@@ -94,6 +97,7 @@ const Camera: React.FC = () => {
     const pose = await detectPose(detector);
     drawSkeleton(pose, ctx);
     drawKeypoints(pose, ctx);
+    
 
     requestAnimationFrame(() => renderLoop(detector));
   };
