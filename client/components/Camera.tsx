@@ -1,14 +1,16 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as poseDetection from "@tensorflow-models/pose-detection";
 import "@tensorflow/tfjs-backend-webgl";
 import * as tf from "@tensorflow/tfjs";
+import { PoseGrade } from "@/app/interfaces";
 
 const Camera: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const websocketRef = useRef<WebSocket | null>(null);
+  const [grades, setGrades] = useState<PoseGrade[]>([]);
 
   // Draw keypoints on the canvas
   const drawKeypoints = (
@@ -156,6 +158,15 @@ const Camera: React.FC = () => {
       console.log("Connected to WebSocket server");
     };
 
+    websocketRef.current.onmessage = (event) => {
+      // Receive JSON data from the backend
+      const receivedData = JSON.parse(event.data);
+      console.log("Received accuracy grades:", receivedData);
+
+      // Update state with received grades
+      setGrades(receivedData);
+    };
+
     websocketRef.current.onclose = () => {
       console.log("Disconnected from WebSocket server");
     };
@@ -169,6 +180,8 @@ const Camera: React.FC = () => {
     };
   }, []);
 
+  //const findBestGrade = () => {};
+
   return (
     <div
       style={{
@@ -177,6 +190,7 @@ const Camera: React.FC = () => {
         alignItems: "center",
       }}
     >
+      {grades ? <div>Grade: {}</div> : <></>}
       <canvas
         ref={canvasRef}
         width={640}

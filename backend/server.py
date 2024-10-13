@@ -1,4 +1,5 @@
 import asyncio
+import json
 import websockets
 import cv2
 import numpy as np
@@ -16,9 +17,27 @@ async def handle_connection(websocket, path):
         nparr = np.frombuffer(image_bytes, np.uint8)
         img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
+        dummy_pose_grades = {
+        "jumpingJacks": {"accuracy": 0.921 },
+        "pushups": {"accuracy": 0.342 },
+        "squats": {"accuracy": 0.111 },
+        }
+        await send_accuracy_grades(websocket, dummy_pose_grades)
+
         # Display the received frame
         cv2.imshow("Received Frame", img)
         cv2.waitKey(1)
+
+        
+
+# Define the function that sends accuracy grades to the frontend
+async def send_accuracy_grades(websocket, data):
+    # Convert the data to JSON format
+    json_data = json.dumps(data)
+    
+    # Send the JSON data to the connected client
+    await websocket.send(json_data)
+
 
 async def main():
     async with websockets.serve(handle_connection, "localhost", 8765):  # Change host and port as needed

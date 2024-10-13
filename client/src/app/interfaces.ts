@@ -20,3 +20,8 @@ export interface SaveTrainerParams {
   userId: number;
   trainerId: number;
 }
+
+export interface PoseGrade {
+  name: string;
+  grade: number;
+}
