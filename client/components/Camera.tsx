@@ -4,17 +4,26 @@ import { useEffect, useRef, useState } from "react";
 import * as poseDetection from "@tensorflow-models/pose-detection";
 import "@tensorflow/tfjs-backend-webgl";
 import * as tf from "@tensorflow/tfjs";
-import { PoseGrade } from "@/app/interfaces";
+// import { PoseGrade } from "@/app/interfaces";
 
 const Camera: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const websocketRef = useRef<WebSocket | null>(null);
-  const [grades, setGrades] = useState<{ [key: string]: { accuracy: number } }>(
-    {}
-  );
+  // State to hold scores for push-ups, pull-ups, and squats
+  const [scores, setScores] = useState<{
+    pushUps: number;
+    pullUps: number;
+    squats: number;
+  }>({
+    pushUps: 10,
+    pullUps: 0,
+    squats: 0,
+  });
   const lastReceivedTimeRef = useRef<number>(0);
-  const throttleTime = 10; // Throttle updates to every 2 seconds
+  const throttleTime = 1000; // Throttle updates to every 2 seconds
+  const [movement, setMovement] = useState<string>("");
+  const [movementScore, setMovementScore] = useState<number>(0);
 
   // Draw keypoints on the canvas
   const drawKeypoints = (
@@ -145,8 +154,23 @@ const Camera: React.FC = () => {
     requestAnimationFrame(() => renderLoop(detector));
   };
 
+  const getScoreForMovement = (selectedMovement: string) => {
+    switch (selectedMovement) {
+      case "pushUps":
+        return scores.pushUps;
+      case "pullUps":
+        return scores.pullUps;
+      case "squats":
+        return scores.squats;
+      default:
+        return 0; // Fallback, should not be reached
+    }
+  };
+
   // Initialize everything on mount
   useEffect(() => {
+    setMovement("pushUps");
+
     const run = async () => {
       await initBackend();
       await setupCamera();
@@ -164,33 +188,29 @@ const Camera: React.FC = () => {
     websocketRef.current.onmessage = (event) => {
       const currentTime = Date.now();
 
-      // Throttle updates
-      if (currentTime - lastReceivedTimeRef.current > throttleTime) {
-        lastReceivedTimeRef.current = currentTime;
-
-        // Receive JSON data from the backend
-        const receivedData = JSON.parse(event.data);
-        console.log("Received accuracy grades:", receivedData);
-
-        // Update state with received grades
-        setGrades((prevGrades) => ({
-          ...prevGrades,
-          ...receivedData,
-        }));
-        setGrades(receivedData);
-      }
-    };
-
-       
-    websocketRef.current.onmessage = (event) => {
+      // Handle incoming messages
       if (event.data instanceof Blob) {
-        event.data.arrayBuffer().then(buffer => {
+        event.data.arrayBuffer().then((buffer) => {
           const array = Array.from(new Float32Array(buffer));
           console.log("Received array:", array);
-          console.log("Array length:", array.length);
         });
       } else {
-        console.log("Received non-binary data:", event.data);
+        // Throttle updates
+        if (currentTime - lastReceivedTimeRef.current > throttleTime) {
+          lastReceivedTimeRef.current = currentTime;
+
+          // Receive JSON data from the backend
+          const receivedData = JSON.parse(event.data);
+          console.log("Received accuracy grades:", receivedData);
+
+          // Update state with received grades
+
+          setScores({
+            pushUps: receivedData[0],
+            pullUps: receivedData[1],
+            squats: receivedData[2],
+          });
+        }
       }
     };
 
@@ -205,26 +225,31 @@ const Camera: React.FC = () => {
         websocketRef.current.close();
       }
     };
-  }, []);
+  }, [movement]);
 
-  const findMaxAccuracy = (grades: {
-    [key: string]: { accuracy: number };
-  }): PoseGrade | null => {
-    let maxPose: string | null = null;
-    let maxAccuracy = -Infinity;
+  useEffect(() => {
+    const newMovementScore = getScoreForMovement(movement);
+    setMovementScore(newMovementScore);
+  }, [scores]);
 
-    // Iterate through the poses and find the maximum accuracy
-    for (const pose in grades) {
-      if (grades[pose].accuracy > maxAccuracy) {
-        maxAccuracy = grades[pose].accuracy;
-        maxPose = pose;
-      }
-    }
+  // const findMaxAccuracy = (grades: {
+  //   [key: string]: { accuracy: number };
+  // }): PoseGrade | null => {
+  //   let maxPose: string | null = null;
+  //   let maxAccuracy = -Infinity;
 
-    return maxPose ? { name: maxPose, grade: maxAccuracy } : null;
-  };
+  //   // Iterate through the poses and find the maximum accuracy
+  //   for (const pose in grades) {
+  //     if (grades[pose].accuracy > maxAccuracy) {
+  //       maxAccuracy = grades[pose].accuracy;
+  //       maxPose = pose;
+  //     }
+  //   }
 
-  const maxAccuracyPose = findMaxAccuracy(grades);
+  //   return maxPose ? { name: maxPose, grade: maxAccuracy } : null;
+  // };
+
+  // const maxAccuracyPose = findMaxAccuracy(scores);
 
   return (
     <div
@@ -235,9 +260,9 @@ const Camera: React.FC = () => {
       }}
     >
       <div>
-        Maximum Accuracy:{" "}
-        {maxAccuracyPose
-          ? `${maxAccuracyPose.name}: ${maxAccuracyPose.grade.toFixed(3)}`
+        Score:{" "}
+        {movement
+          ? `${movement}: ${movementScore.toFixed(3)}`
           : "No data available"}
       </div>
       <canvas

@@ -17,11 +17,7 @@ async def handle_connection(websocket, path):
         nparr = np.frombuffer(image_bytes, np.uint8)
         img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
-        dummy_pose_grades = {
-        "jumpingJacks": {"accuracy": 0.921 },
-        "pushups": {"accuracy": 0.342 },
-        "squats": {"accuracy": 0.111 },
-        }
+        dummy_pose_grades = [0.91, 0.11, 0.33]
         await send_accuracy_grades(websocket, dummy_pose_grades)
 
         # Display the received frame
