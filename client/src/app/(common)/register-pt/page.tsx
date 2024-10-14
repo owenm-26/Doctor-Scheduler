@@ -16,10 +16,6 @@ type FieldType = {
 const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
   console.log(values);
 
-  if (values.birthday) {
-    const birthday: Date = new Date;
-  }
-
   try {
     console.log("Attempting fetch...");
     const birthdayISO = values.birthday

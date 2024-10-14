@@ -32,3 +32,10 @@ export interface CustomDropdownParams {
 export interface VideoStreamParams {
   selectedStretch: string;
 }
+
+export interface MovementData {
+  [movementName: string]: number;
+  // up?: number;
+  // down?: number;
+  // For movements like "clap" where there's no up/down, just a single count.
+}

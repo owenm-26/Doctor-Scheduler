@@ -19,7 +19,7 @@ export default function RootLayout({
   const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const secretKey = process.env.NEXT_PUBLIC_JWT_SECRET;
-  const [userId, setUserId] = useState(false);
+  // const [userId, setUserId] = useState(false);
   const pathname = usePathname();
 
   const checkLoginStatus = () => {
@@ -27,26 +27,26 @@ export default function RootLayout({
     const sessionCookie = cookies.find((cookie) =>
       cookie.startsWith("session")
     );
-  
+
     if (!sessionCookie) {
       setIsLoggedIn(false);
       return false;
     }
-  
+
     const token = sessionCookie.split("=")[1];
-  
+
     if (!secretKey) {
       console.error("JWT secret key is undefined");
       setIsLoggedIn(false);
       return false;
     }
-  
+
     try {
       // Verify and decode the JWT
       const decoded = jwt.verify(token, secretKey) as DecodedJWT;
-  
+
       // Check if decoded is an object and has userId
-      if (decoded && typeof decoded === 'object' && decoded.userId) {
+      if (decoded && typeof decoded === "object" && decoded.userId) {
         setIsLoggedIn(true);
         return true;
       } else {
@@ -93,7 +93,7 @@ export default function RootLayout({
     return () => {
       window.removeEventListener("storage", handleStorageChange); // Cleanup listener
     };
-  }, [router]);
+  }, [router, secretKey]);
 
   const handleLogout = () => {
     document.cookie =

@@ -12,19 +12,18 @@ const MainHeader: React.FC<MainHeaderProps> = ({ isLoggedIn, onLogout }) => {
   const { Header } = Layout;
   const router = useRouter();
 
+  // const runPythonScript = async () => {
+  //   const response = await fetch("/api/launchPythonAdder", {
+  //     method: "GET",
+  //   });
 
-  const runPythonScript = async () => {
-    const response = await fetch("/api/launchPythonAdder", {
-      method: "GET",
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      console.log(data);
-    } else {
-      console.error("Error running Python script");
-    }
-  };
+  //   if (response.ok) {
+  //     const data = await response.json();
+  //     console.log(data);
+  //   } else {
+  //     console.error("Error running Python script");
+  //   }
+  // };
 
   const menuItems = isLoggedIn
     ? [
@@ -55,7 +54,7 @@ const MainHeader: React.FC<MainHeaderProps> = ({ isLoggedIn, onLogout }) => {
           label: "Register",
           onClick: () => router.push("/register-onboard"),
         },
-      ]; 
+      ];
 
   return (
     <Header

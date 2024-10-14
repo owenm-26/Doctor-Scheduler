@@ -1,4 +1,4 @@
-import { VideoStreamParams } from "@/app/interfaces"; // Adjust the import path as necessary
+import { MovementData, VideoStreamParams } from "@/app/interfaces"; // Adjust the import path as necessary
 import { useEffect, useRef, useState } from "react";
 import { Line } from "react-chartjs-2";
 import {
@@ -24,8 +24,7 @@ ChartJS.register(
 const VideoStream: React.FC<VideoStreamParams> = ({ selectedStretch }) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const [wsData, setWsData] = useState<any>(null); // State to store WebSocket data
-  const [isConnected, setIsConnected] = useState<boolean>(false); // Connection status
+  const [wsData, setWsData] = useState<MovementData>(); // State to store WebSocket data
   const [frameCount, setFrameCount] = useState<number>(0); // Count of frames sent
   const wsRef = useRef<WebSocket | null>(null);
 
@@ -75,19 +74,17 @@ const VideoStream: React.FC<VideoStreamParams> = ({ selectedStretch }) => {
 
     wsRef.current.onopen = () => {
       console.log("WebSocket connection established");
-      setIsConnected(true);
       sendFrame(); // Start sending frames once connected
     };
 
     wsRef.current.onerror = (error) => console.error("WebSocket error:", error);
     wsRef.current.onclose = () => {
       console.log("WebSocket connection closed");
-      setIsConnected(false);
     };
 
     wsRef.current.onmessage = (event) => {
-      console.log(event.data);
-      setWsData(event.data); // Store the received data in state
+      // console.log(JSON.parse(event.data));
+      setWsData(JSON.parse(event.data));
     };
 
     // Access user media
@@ -158,30 +155,30 @@ const VideoStream: React.FC<VideoStreamParams> = ({ selectedStretch }) => {
     requestAnimationFrame(sendFrame);
   };
 
-  const filterDataByStretch = (data: any): number => {
+  const filterDataByStretch = (data: MovementData): number => {
     if (!data || !selectedStretch) return 0;
 
     // Map based on selected stretch
     switch (selectedStretch) {
       case "Squats":
-        return Math.max(data.squats_up || 0, data.squats_down || 0);
+        return Math.max(data["squats_up"] || 0, data["squats_down"] || 0);
       case "Jumping Jacks":
         return Math.max(
-          data.jumping_jacks_up || 0,
-          data.jumping_jacks_down || 0
+          data["jumping_jacks_up"] || 0,
+          data["jumping_jacks_down"] || 0
         );
       case "Pull-Ups":
-        return Math.max(data.pullups_up || 0, data.pullups_down || 0);
+        return Math.max(data["pullups_up"] || 0, data["pullups_down"] || 0);
       case "Push-Ups":
-        return Math.max(data.pushups_up || 0, data.pushups_down || 0);
+        return Math.max(data["pushups_up"] || 0, data["pushups_down"] || 0);
       case "Sit-Ups":
-        return Math.max(data.situps_up || 0, data.situps_down || 0);
+        return Math.max(data["situps_up"] || 0, data["situps_down"] || 0);
       default:
         return 0;
     }
   };
 
-  const renderWsData = (data: any) => {
+  const renderWsData = (data: MovementData) => {
     const filteredScore = filterDataByStretch(data);
 
     if (filteredScore) {
@@ -216,13 +213,11 @@ const VideoStream: React.FC<VideoStreamParams> = ({ selectedStretch }) => {
 
   useEffect(() => {
     if (wsData) {
-      const parsedData = JSON.parse(wsData);
-
       // Get current time for the label
       const newTimestamp = new Date().toLocaleTimeString();
 
       // Update chart data with the new score
-      const filteredScore = filterDataByStretch(parsedData);
+      const filteredScore = filterDataByStretch(wsData);
 
       setChartData((prevChartData) => {
         const updatedLabels = [...prevChartData.labels, newTimestamp];
@@ -254,11 +249,7 @@ const VideoStream: React.FC<VideoStreamParams> = ({ selectedStretch }) => {
       <div className="flex flex-col gap-2 w-full h-full max-w-lg">
         <h2 className="text-4xl">Received Data:</h2>
         <div className="overflow-auto max-h-96">
-          {wsData ? (
-            renderWsData(JSON.parse(wsData))
-          ) : (
-            <p>No data received yet.</p>
-          )}
+          {wsData ? renderWsData(wsData) : <p>No data received yet.</p>}
         </div>
         <h4 className="text-2xl">Frames Sent: {frameCount}</h4>
         <h4 className="text-2xl">

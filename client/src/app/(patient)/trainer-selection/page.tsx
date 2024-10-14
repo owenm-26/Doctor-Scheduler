@@ -75,7 +75,7 @@ const TrainerPage: React.FC = () => {
     if (leave) {
       fetchSave(); // Call save function if leave is true
     }
-  }, [leave, selected, userId]); // Run when leave, selected, or userId changes
+  }, [leave, selected, userId, router]); // Run when leave, selected, or userId changes
 
   return (
     <div>
