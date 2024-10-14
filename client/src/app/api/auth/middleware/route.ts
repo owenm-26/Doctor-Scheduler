@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 
-export async function middleware(req: NextRequest) {
+export async function POST(req: NextRequest) {
   const token = req.cookies.get("token")?.value || null;
 
   let userId: string | null = null;
