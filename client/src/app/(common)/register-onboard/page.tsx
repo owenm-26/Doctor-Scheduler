@@ -7,14 +7,14 @@ const RegisterOnboard: React.FC = () => {
           <h2 className="text-4xl">Register</h2>
           <div className="w-full max-w-md" style={{ color: "white" }}>
             <Link href="/register-patient">
-              <button className="border-2 border-solid rounded-md p-4 w-full bg-white">
+              <button className="border-2 border-solid rounded-md p-4 w-full bg-white text-black">
                 Are you a patient?
               </button>
             </Link>
           </div>
           <div className="w-full max-w-md" style={{ color: "white" }}>
             <Link href="/register-pt">
-              <button className="border-2 border-solid rounded-md p-4 w-full bg-white">
+              <button className="border-2 border-solid rounded-md p-4 w-full bg-white text-black">
                 Are you a PT?
               </button>
             </Link>
